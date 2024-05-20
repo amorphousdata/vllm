@@ -17,4 +17,8 @@ RUN pip install -v -r requirements-cpu.txt --extra-index-url https://download.py
 
 RUN VLLM_TARGET_DEVICE=cpu python3 setup.py install
 
+# install additional dependencies for openai api server
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install accelerate hf_transfer modelscope
+
 ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--api-key", "grum-71db-z91jf", "--model","casperhansen/llama-3-8b-instruct-awq","--dtype","half"]
