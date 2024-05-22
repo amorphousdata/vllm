@@ -21,4 +21,7 @@ RUN VLLM_TARGET_DEVICE=cpu python3 setup.py install
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install accelerate hf_transfer modelscope
 
-ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--api-key", "grum-71db-z91jf", "--model","casperhansen/llama-3-8b-instruct-awq","--dtype","half"]
+ENV API_KEY='8dfs-12j4-jfd0'
+ENV MODEL='meta-llama/Meta-Llama-3-8B-Instruct'
+
+ENTRYPOINT ["sh", "-c", "python3 -m vllm.entrypoints.openai.api_server --model $MODEL --api-key $API_KEY"]
