@@ -34,10 +34,12 @@ ENV VLLM_CPU_DISABLE_AVX512=${VLLM_CPU_DISABLE_AVX512}
 ARG HUGGING_FACE_HUB_TOKEN
 ENV HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
 
+ENV MODEL_NAME=meta-llama/Meta-Llama-3-8B-Instruct
+
 RUN VLLM_TARGET_DEVICE=cpu python3 setup.py install
 
 WORKDIR /workspace/
 
 RUN ln -s /workspace/vllm/tests && ln -s /workspace/vllm/examples && ln -s /workspace/vllm/benchmarks
 
-ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--model", "meta-llama/Meta-Llama-3-8B-Instruct"]
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--model", "${MODEL_NAME}"]
