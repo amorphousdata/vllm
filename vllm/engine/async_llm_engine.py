@@ -658,6 +658,9 @@ class AsyncLLMEngine:
                 logger.error(
                     "Engine iteration timed out. This should never happen!")
                 raise
+            except Exception as exc:
+                logger.error(f"An unexpected exception occurred: {exc}")
+                raise
             await asyncio.sleep(0)
 
     async def add_request(
