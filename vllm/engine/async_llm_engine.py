@@ -657,7 +657,10 @@ class AsyncLLMEngine:
             except asyncio.TimeoutError as exc:
                 logger.error(
                     "Engine iteration timed out. This should never happen!")
-                raise
+                for task in requests_in_progress:
+                    if not task.done():
+                        task.cancel()
+                continue
             except Exception as exc:
                 logger.error(f"An unexpected exception occurred: {exc}")
                 raise
