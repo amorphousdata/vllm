@@ -127,8 +127,11 @@ async def show_version():
 @router.post("/v1/chat/completions")
 async def create_chat_completion(request: ChatCompletionRequest,
                                  raw_request: Request):
-    generator = await openai_serving_chat.create_chat_completion(
-        request, raw_request)
+    try:
+        generator = await openai_serving_chat.create_chat_completion(
+            request, raw_request)
+    except asyncio.TimeoutError:
+        return JSONResponse(status_code=408)
     if isinstance(generator, ErrorResponse):
         return JSONResponse(content=generator.model_dump(),
                             status_code=generator.code)
@@ -142,8 +145,11 @@ async def create_chat_completion(request: ChatCompletionRequest,
 
 @router.post("/v1/completions")
 async def create_completion(request: CompletionRequest, raw_request: Request):
-    generator = await openai_serving_completion.create_completion(
-        request, raw_request)
+    try:
+        generator = await openai_serving_completion.create_completion(
+            request, raw_request)
+    except asyncio.TimeoutError:
+        return JSONResponse(status_code=408)
     if isinstance(generator, ErrorResponse):
         return JSONResponse(content=generator.model_dump(),
                             status_code=generator.code)
@@ -156,8 +162,11 @@ async def create_completion(request: CompletionRequest, raw_request: Request):
 
 @router.post("/v1/embeddings")
 async def create_embedding(request: EmbeddingRequest, raw_request: Request):
-    generator = await openai_serving_embedding.create_embedding(
-        request, raw_request)
+    try:
+        generator = await openai_serving_embedding.create_embedding(
+            request, raw_request)
+    except asyncio.TimeoutError:
+        return JSONResponse(status_code=408)
     if isinstance(generator, ErrorResponse):
         return JSONResponse(content=generator.model_dump(),
                             status_code=generator.code)
