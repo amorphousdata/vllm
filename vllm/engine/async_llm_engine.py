@@ -223,8 +223,8 @@ class RequestTracker:
         while not self._new_requests.empty():
             stream, new_request = self._new_requests.get_nowait()
             request_id = stream.request_id
+            logger.info('Aborting request ' + str(request_id))
             self.abort_request(request_id)
-            self._request_streams.pop(request_id, None)
         self.new_requests_event.clear()
 
 class _AsyncLLMEngine(LLMEngine):
