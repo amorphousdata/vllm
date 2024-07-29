@@ -217,7 +217,15 @@ class RequestTracker:
 
     def has_new_requests(self):
         return not self._new_requests.empty()
-
+    
+    def clear_pending_requests(self) -> None:
+        """Clear any pending requests that have not yet been processed."""
+        while not self._new_requests.empty():
+            stream, new_request = self._new_requests.get_nowait()
+            request_id = stream.request_id
+            self.abort_request(request_id)
+            self._request_streams.pop(request_id, None)
+        self.new_requests_event.clear()
 
 class _AsyncLLMEngine(LLMEngine):
     """Extension of LLMEngine to add async methods."""
@@ -664,6 +672,7 @@ class AsyncLLMEngine:
                         task.cancel()  # Optionally, cancel the task if necessary
                         requests_in_progress[i] = asyncio.create_task(asyncio.sleep(0)) # Dummy task
                         has_requests_in_progress[i] = False
+                        self._request_tracker.clear_pending_requests()
                         break
             except Exception as exc:
                 logger.error(f"An unexpected exception occurred: {exc}")
