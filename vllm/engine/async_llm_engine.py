@@ -219,16 +219,9 @@ class RequestTracker:
         return not self._new_requests.empty()
     
     def clear_pending_requests(self) -> None:
-        logger.error('clearing pending reqs ...')
         """Clear any pending requests that have not yet been processed."""
-        while not self._new_requests.empty():
-            stream, new_request = self._new_requests.get_nowait()
-            request_id = stream.request_id
-            logger.error('__ Aborting new request ' + str(request_id))
-            self.abort_request(request_id)
-        logger.error('all new requests cleared ...')
         for request_id, stream in self._request_streams.items():
-            logger.error('__ Aborting request ' + str(request_id))
+            logger.error('Aborting request ' + str(request_id))
             self.abort_request(request_id)
 
         self.new_requests_event.clear()
