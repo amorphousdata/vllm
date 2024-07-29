@@ -223,7 +223,7 @@ class RequestTracker:
         while not self._new_requests.empty():
             stream, new_request = self._new_requests.get_nowait()
             request_id = stream.request_id
-            logger.info('Aborting request ' + str(request_id))
+            logger.error('Aborting request ' + str(request_id))
             self.abort_request(request_id)
         self.new_requests_event.clear()
 
@@ -670,8 +670,10 @@ class AsyncLLMEngine:
                     if task is not None and not task.done():
                         logger.error(f"Task {task} caused the timeout and is being removed.")
                         task.cancel()  # Optionally, cancel the task if necessary
+                        logger.error('task cancelled')
                         requests_in_progress[i] = asyncio.create_task(asyncio.sleep(0)) # Dummy task
                         has_requests_in_progress[i] = False
+                        logger.error('clearing pending requests')
                         self._request_tracker.clear_pending_requests()
                         break
             except Exception as exc:
