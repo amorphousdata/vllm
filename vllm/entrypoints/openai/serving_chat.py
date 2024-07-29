@@ -451,7 +451,8 @@ class OpenAIServingChat(OpenAIServing):
                 await self.engine.abort(request_id)
                 return self.create_error_response("Client disconnected")
             final_res = res
-        assert final_res is not None
+        if final_res is None:
+            return self.create_error_response("No results error")
 
         choices: List[ChatCompletionResponseChoice] = []
 
